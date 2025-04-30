@@ -11,20 +11,11 @@
 					v-model="email"
 					required
 					placeholder="Enter your email to be a beta tester" />
-				<button
-					type="submit"
-					class="soon__button"
-					style="opacity: 0.5; cursor: not-allowed"
-					disabled>
+				<button type="submit" class="soon__button">
 					{{ submitStatus }}
 				</button>
 				<div class="soon__row">
-					<input
-						type="checkbox"
-						name="news"
-						id="news"
-						class="soon__checkbox"
-						v-model="gettingEmails" />
+					<input type="checkbox" name="news" id="news" class="soon__checkbox" required />
 					<label for="news" class="soon__row-text">
 						I consent to receive news and promotional content from Brainstorming Films
 						in my email and confirm that I am 16 years of age or older.
@@ -36,8 +27,7 @@
 						name="news"
 						id="policy"
 						class="soon__checkbox"
-						required
-						v-model="hasReadPolicy" />
+						required />
 					<label for="policy" class="soon__row-text">
 						I have read and accepted the Terms and Conditions and the Privacy Policy
 					</label>
@@ -89,17 +79,37 @@
 import { onMounted, ref } from 'vue';
 
 const email = ref('');
-const gettingEmails = ref(false);
-const hasReadPolicy = ref(false);
 const submitStatus = ref('submit');
 const titleRef = ref(null);
 const formRef = ref(null);
 const bottomRef = ref(null);
 
-const submitForm = () => {
-	console.log(email.value);
-	console.log(gettingEmails.value);
-	console.log(hasReadPolicy.value);
+const url = 'http://api.skydungeon.uz/api/enquiry';
+
+const submitForm = async () => {
+	submitStatus.value = 'submitting...';
+	try {
+		const res = await fetch(url, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				Accept: 'application/json'
+			},
+			body: JSON.stringify({
+				email: email.value
+			})
+		});
+		const body = await res.json();
+		console.log(body);
+	} catch (error) {
+		console.error(error);
+	} finally {
+		submitStatus.value = 'submitted ✅';
+		email.value = '';
+		setTimeout(() => {
+			submitStatus.value = 'submit';
+		}, 1500);
+	}
 };
 
 onMounted(() => {
