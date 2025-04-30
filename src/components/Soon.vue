@@ -99,8 +99,7 @@ const submitForm = async () => {
 				email: email.value
 			})
 		});
-		const body = await res.json();
-		console.log(body);
+		await res.json();
 	} catch (error) {
 		console.error(error);
 	} finally {
